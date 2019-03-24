@@ -13,8 +13,6 @@ local nats = {
 
 nats.__index = nats
 
-local inspect_lib = require "inspect"
-
 
 local function create_inbox()
     return '_INBOX.' .. uuid()
@@ -93,7 +91,6 @@ local function nats_login(self)
             -- gather the server information
             if res.action == "INFO" then
                 self.information = cjson.decode(res.content)
-                DEBUG("nats information:", inspect(self.information) )
             end
             uuid.seed()
         end
@@ -184,10 +181,8 @@ end
 function nats:subscribe(subject, callback)
     local unique_id = uuid()
     local str = 'SUB '..subject..' '..unique_id..'\r\n'
-    ERROR("========subscribe=======", str)
     local res, err = self:send(str)
     self.subscriptions[unique_id] = callback
-    ERROR("+++++++subscribe++++++", inspect(res), inspect(err))
     return unique_id
 end
 
